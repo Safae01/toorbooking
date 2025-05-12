@@ -7,6 +7,11 @@ if ($ordre === 'desc') {
 } else {
     $query = "SELECT * FROM tour ORDER BY tour_price ASC";
 }
+if($_POST['search']){
+    $srch = $_POST['search'];
+    $sql=$db->prepare("SELECT * FROM tour WHERE tour_name = :srch");
+    
+}
 
 $req = $db->prepare($query);
 $req->execute();
@@ -39,4 +44,8 @@ $row = $req->fetchAll(PDO::FETCH_ASSOC);
         <option value="asc"<?= ($ordre==='asc')? 'selected': ''?>>ordre croissant</option>
     </select>
     <button type="submit">Trier</button>
+</form>
+<form action="" method="post">
+    <input type="text" name="search" id="search">
+    <button type="submit" name="search" > search</button>
 </form>
