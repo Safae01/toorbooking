@@ -1,23 +1,24 @@
 <?php
 require_once 'connexion.php';
-
 $ordre = $_GET['ordre'] ?? 'asc'; 
-if ($ordre === 'desc') {
-    $query = "SELECT * FROM tour ORDER BY tour_price DESC";
+$row = []; 
+if (!empty($_POST['search'])) {
+    $search = $_POST['search'];
+    $query = "SELECT * FROM tour WHERE tour_name LIKE :search";
+    $req = $db->prepare($query);
+    $req->execute([
+        ':search' => '%' . $search . '%'
+    ]);
+    $row = $req->fetchAll(PDO::FETCH_ASSOC);
 } else {
-    $query = "SELECT * FROM tour ORDER BY tour_price ASC";
-}
-if($_POST['search']){
-    $srch = $_POST['search'];
-    $sql=$db->prepare("SELECT * FROM tour WHERE tour_name = :srch");
     
+    $ordre_sql = ($ordre === 'desc') ? 'DESC' : 'ASC';
+    $query = "SELECT * FROM tour ORDER BY tour_price $ordre_sql";
+    $req = $db->prepare($query);
+    $req->execute();
+    $row = $req->fetchAll(PDO::FETCH_ASSOC);
 }
-
-$req = $db->prepare($query);
-$req->execute();
-$row = $req->fetchAll(PDO::FETCH_ASSOC);
 ?>
-
 
 
 <table border="1">
@@ -47,5 +48,5 @@ $row = $req->fetchAll(PDO::FETCH_ASSOC);
 </form>
 <form action="" method="post">
     <input type="text" name="search" id="search">
-    <button type="submit" name="search" > search</button>
+    <button type="submit" name="searchh" > search</button>
 </form>
